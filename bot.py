@@ -4,7 +4,7 @@ import os
 
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message
-from model import BotUsers
+from model import BotUsers, pg_db
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -35,6 +35,7 @@ async def send_welcome(message: Message):
 
 
 async def start_bot():
+    pg_db.create_tables([BotUsers])
     await dp.start_polling()
 
 
