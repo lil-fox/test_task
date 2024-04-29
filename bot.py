@@ -4,7 +4,7 @@ import os
 
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message
-from model import User
+from model import BotUsers
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -19,7 +19,7 @@ async def start_broadcast(data: str):
     """Send message with new price to all users"""
     title, price = data.strip().split('-')
 
-    users = [user for user in User.select()]
+    users = [user for user in BotUsers.select()]
 
     for user in users:
         msg = f"{title} - {price}€\n"
@@ -30,7 +30,7 @@ async def start_broadcast(data: str):
 @dp.message_handler(commands=["start"])
 async def send_welcome(message: Message):
     """Send welcome message"""
-    User.get_or_create(id=message.from_user.id, name=message.from_user.full_name)
+    BotUsers.get_or_create(id=message.from_user.id, name=message.from_user.full_name)
     await message.reply("Hi!\nBot will send prices updates.\n")
 
 

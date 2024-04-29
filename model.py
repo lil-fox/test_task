@@ -17,6 +17,6 @@ class BaseModel(Model):
         database = pg_db
 
 
-class User(BaseModel):
+class BotUsers(BaseModel):
     id = PrimaryKeyField()
     name = TextField()
