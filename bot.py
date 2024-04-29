@@ -4,7 +4,7 @@ import os
 
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message
-from database import User
+from model import User
 from dotenv import load_dotenv
 
 load_dotenv()
