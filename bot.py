@@ -4,7 +4,7 @@ import os
 
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message
-from db.database import User
+from database import User
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -13,6 +13,18 @@ logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=os.environ.get("API_TOKEN"))
 dp = Dispatcher(bot)
+
+
+async def start_broadcast(data: str):
+    """Send message with new price to all users"""
+    title, price = data.strip().split('-')
+
+    users = [user for user in User.select()]
+
+    for user in users:
+        msg = f"{title} - {price}€\n"
+
+        await bot.send_message(user.id, msg)
 
 
 @dp.message_handler(commands=["start"])

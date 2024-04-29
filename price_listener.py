@@ -5,7 +5,7 @@ import select
 import psycopg2
 import psycopg2.extensions
 
-from bot.broadcast import start_broadcast
+import bot
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -30,7 +30,7 @@ async def listen():
             connection.poll()
             while connection.notifies:
                 notification = connection.notifies.pop(0)
-                await start_broadcast(notification.payload)
+                await bot.start_broadcast(notification.payload)
 
 
 async def main():
