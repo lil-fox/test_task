@@ -1,11 +1,10 @@
 import asyncio
-import os
-
 import select
 import psycopg2
 import psycopg2.extensions
+import os
 
-import bot
+from bot import start_broadcast
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -14,14 +13,18 @@ load_dotenv()
 async def listen():
     """Listen notification from base in notify_price_change chanel"""
 
-    connection = psycopg2.connect(dbname=os.environ.get("DB_NAME"),
-                                  user=os.environ.get("DB_USER"),
-                                  password=os.environ.get("DB_PASS"))
+    connection = psycopg2.connect(
+        host=os.environ.get("DB_HOST"),
+        port=os.environ.get("DB_PORT"),
+        database=os.environ.get("DB_NAME"),
+        user=os.environ.get("DB_USER"),
+        password=os.environ.get("DB_PASS")
+    )
 
     connection.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
 
     cursor = connection.cursor()
-    cursor.execute("LISTEN notify_price_change;")
+    cursor.execute("LISTEN product_price_change;")
 
     while True:
         if select.select([connection], [], [], 5) == ([], [], []):
@@ -29,8 +32,9 @@ async def listen():
         else:
             connection.poll()
             while connection.notifies:
+                print('connection..pull....')
                 notification = connection.notifies.pop(0)
-                await bot.start_broadcast(notification.payload)
+                await start_broadcast(notification.payload)
 
 
 async def main():

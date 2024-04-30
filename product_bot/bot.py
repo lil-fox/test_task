@@ -1,30 +1,29 @@
-import asyncio
-import logging
-import os
-
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message
-from model import BotUsers, pg_db
 from dotenv import load_dotenv
+import asyncio
+import logging
+import json
+import os
+
+from model import BotUsers, pg_db
+
 
 load_dotenv()
-
 logging.basicConfig(level=logging.INFO)
 
-bot = Bot(token=os.environ.get("API_TOKEN"))
+bot = Bot(token=os.environ.get("BOT_TOKEN"))
 dp = Dispatcher(bot)
 
 
 async def start_broadcast(data: str):
     """Send message with new price to all users"""
-    title, price = data.strip().split('-')
+    product = json.loads(data)
+    _users = [user for user in BotUsers.select()]
 
-    users = [user for user in BotUsers.select()]
-
-    for user in users:
-        msg = f"{title} - {price}€\n"
-
-        await bot.send_message(user.id, msg)
+    for user in _users:
+        msg = f"{product['title']} - {product['price']}€\n"
+        await bot.send_message(user, msg)
 
 
 @dp.message_handler(commands=["start"])
